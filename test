@@ -1,0 +1,43 @@
+#!/usr/bin/env python3
+# -*- coding:utf-8 _*-
+"""
+@author:ljc
+@file: main.py
+@time: 2018/11/06
+"""
+import os
+import sys
+import click
+
+from source import config
+from source.common.utils.log import get_logger
+from source.poll.wallets import WalletRechargeRemote, WalletWithdraw
+from source.model.records import WithdrawRecord
+
+logger = get_logger(__name__, config.log_level)
+
+
+@click.group()
+def cli():
+    pass
+
+
+@cli.command()
+def withdraw():
+    recharge = WalletRechargeRemote(config)
+    withdraw = WalletWithdraw(config)
+    records = WithdrawRecord(config)
+    from_address = withdraw.wallet_address
+    to_address = recharge.wallet_address
+    amount = 1
+    txid = withdraw.transfer_to(recharge.wallet_address, amount)
+    records.insert(dict(
+        txid=txid,
+        amount=amount,
+        from_address=from_address,
+        to_address=to_address,
+    ))
+
+
+if __name__ == "__main__":
+    cli()

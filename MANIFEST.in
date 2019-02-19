@@ -1,0 +1,7 @@
+include setup.py
+include MANIFEST.in
+include requirements.txt
+include supervisord.conf
+include gunicorn_config.py
+include Dockerfile
+include docs/*
